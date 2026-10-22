@@ -1,4 +1,3 @@
-// app.js
 const os = require('node:os');
 const logger = require('./logger');
 
