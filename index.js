@@ -1,9 +1,38 @@
-const express = require('express');
-const mongoose = require('mongoose');
+const path = require('path');
+const os = require('os');
+const fs = require('fs');
+const EventEmitter = require('events');
+const emitter = new EventEmitter();
 
-const app = express();
-app.get('/', (req, res) => res.send('ok'));
-require('node:dns').setServers(['8.8.8.8', '1.1.1.1']);
-mongoose.connect(process.env.MONGO_URL)
-  .then(() => app.listen(3000, () => console.log('Escuchando en 3000')))
-  .catch(err => { console.error(err); process.exit(1); });
+emitter.on('messageLogged', function() {
+    console.log("Listener called");
+});
+
+emitter.emit('messageLogged');
+
+
+
+
+
+var pathObj = path.parse(__filename);
+const log = require('./logger');
+
+let totalMemory = (os.totalmem()/ (1024 ** 3)).toFixed(2);
+let freeMemory = (os.freemem()/ (1024 ** 3)).toFixed(2);
+let totalMemoryGB = Math.round(totalMemory);
+let freeMemoryGB = Math.round(freeMemory);
+
+const files = fs.readdirSync('./');
+
+
+
+
+
+
+
+console.log(`Total Memory: ${totalMemoryGB} GB`);
+console.log(`Free Memory: ${freeMemoryGB} GB`);
+log('message');
+console.log(pathObj);
+console.log(files);
+console.log(`Files: ${JSON.stringify(files)}`);
