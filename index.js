@@ -20,7 +20,7 @@ app.get('/api/categories', (req, res) => {
 
 
 app.post('/api/categories', (req, res) => {
-  const { error, value } = validateCategory(req.body ?? {});
+  const { error, value } = validateCategory(req.body);
   
   if (error) return res.status(400).send(error.details[0].message);
 
@@ -34,7 +34,7 @@ app.post('/api/categories', (req, res) => {
 });
 
 app.put('/api/categories/:id', (req, res) => {
-  let category = categories.find(c => c.id === parseInt(req.params.id));
+  let category = categories.find(c => c.id === Number(req.params.id));
   if (!category) return res.status(404).send('Category not found');
  
   const { error, value } = validateCategory(req.body);
@@ -52,7 +52,7 @@ app.get('/api/categories/:id', (req, res) => {
 });
 
 app.delete('/api/categories/:id', (req, res) => {
-  let category = categories.find(c => c.id === parseInt(req.params.id));
+  let category = categories.find(c => c.id === Number(req.params.id));
   if (!category) return res.status(404).send('Category not found');
 
   const index = categories.indexOf(category);
@@ -65,7 +65,7 @@ function validateCategory(category) {
   const schema = Joi.object({
     name: Joi.string().min(3).required().max(50)
   });
-  return schema.validate(category);
+  return schema.validate(category ?? {});
 }
 
 const port = process.env.PORT || 3000;
