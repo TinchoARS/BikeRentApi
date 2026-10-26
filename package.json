@@ -21,9 +21,13 @@
   },
   "homepage": "https://github.com/TinchoARS/BikeRentApi#readme",
   "dependencies": {
+    "config": "^5.0.1",
+    "debug": "^4.4.3",
     "express": "^5.3.0",
+    "helmet": "^8.3.0",
     "joi": "^18.3.0",
-    "mongoose": "^9.11.2"
+    "mongoose": "^9.11.2",
+    "morgan": "^1.12.1"
   },
   "devDependencies": {
     "nodemon": "^3.1.14"

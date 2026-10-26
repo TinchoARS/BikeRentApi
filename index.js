@@ -1,10 +1,37 @@
+const config = require('config');
+const startupDebugger = require('debug')('app:startup');
+const dbDebugger = require('debug')('app:db');
 const os = require('node:os');
 const logger = require('./logger');
 const express = require('express');
+const helmet = require('helmet');
+const morgan = require('morgan');
 const Joi = require('joi');
 const app = express();
 
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(express.static('public'));
+app.use(helmet());
+app.use(logger);
+
+console.log(`Application Name: ${config.get('name')}`);
+console.log(`Mail Host: ${config.get('mail').host}`);
+console.log(`Mail Password: ${config.get('mail').password}`);
+
+console.log(`NODE_ENV: ${process.env.NODE_ENV}`);
+console.log(`app: ${app.get('env')}`);
+if(app.get('env') === 'development'){
+  app.use(morgan('tiny'));
+  startupDebugger('Morgan enabled...');
+}
+
+dbDebugger('connected to the database...');
+
+app.use(function(req, res, next){
+ console.log("Authenticating...");
+ next();
+});
 const categories = [
   
   {id:1, name: 'Mountain'},
