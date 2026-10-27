@@ -1,17 +1,25 @@
 const express = require('express');
 const router = express.Router();
+const Joi = require('joi');
 
-const categories = [
-  
-  {id:1, name: 'Mountain'},
-  {id:2, name: 'Route'},
-  {id:3, name: 'City'}
-];
-let nextCategoryId = Math.max(...categories.map(category => category.id)) + 1;
+const store = require('../db/categoriesStore');
 
-router.get('/', (req, res) => {
-  res.json({ categories: categories });
+router.get('/', async (req, res) => {
+  const categories = await store.getAllCategories();
+  res.json({ categories });
 });
+
+router.get('/:id', async (req, res) => {
+  const id = Number(req.params.id);
+  if (!Number.isInteger(id) || id <= 0) {
+    return res.status(400).send('Invalid category id');
+  }
+
+  const category = await store.getCategory(id);
+  if (!category) return res.status(404).send('Category not found');
+  res.json({ category });
+});
+
 router.post('/', (req, res) => {
   const { error, value } = validateCategory(req.body);
   if (error) return res.status(400).send(error.details[0].message);
@@ -23,26 +31,33 @@ router.post('/', (req, res) => {
   nextCategoryId += 1;
   res.status(201).json(category);
 });
-router.put('/:id', (req, res) => {
-  let category = categories.find(c => c.id === Number(req.params.id));
-  if (!category) return res.status(404).send('Category not found'); 
-  const { error, value } = validateCategory(req.body);  
+router.put('/:id', async (req, res) => {
+  const id = Number(req.params.id);
+  if (!Number.isInteger(id) || id <= 0) {
+    return res.status(400).send('Invalid category id');
+  }
+
+  const { error, value } = validateCategory(req.body);
   if (error) return res.status(400).send(error.details[0].message);
-  category.name = value.name;
-  res.send(category);
-});
-router.get('/:id', (req, res) => {
-  let category = categories.find(c => c.id === Number(req.params.id));
+
+  const category = await store.updateCategory(id, value.name);
   if (!category) return res.status(404).send('Category not found');
-  res.json({ category: category });
+
+  res.json(category);
 });
-router.delete('/:id', (req, res) => {
-  let category = categories.find(c => c.id === Number(req.params.id));
+
+router.delete('/:id', async (req, res) => {
+  const id = Number(req.params.id);
+  if (!Number.isInteger(id) || id <= 0) {
+    return res.status(400).send('Invalid category id');
+  }
+
+  const category = await store.deleteCategory(id);
   if (!category) return res.status(404).send('Category not found');
-  const index = categories.indexOf(category);
-  categories.splice(index, 1);
-  res.send(category);
+
+  res.json(category);
 });
+
 function validateCategory(category) {
   const schema = Joi.object({
     name: Joi.string().min(3).required().max(50)

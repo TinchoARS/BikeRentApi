@@ -1,12 +1,10 @@
 const config = require('config');
 const startupDebugger = require('debug')('app:startup');
 const dbDebugger = require('debug')('app:db');
-const os = require('node:os');
 const logger = require('./middleware/logger');
 const express = require('express');
 const helmet = require('helmet');
 const morgan = require('morgan');
-const Joi = require('joi');
 const categories = require('./routes/categories');
 const home = require('./routes/home');
 const app = express();
@@ -24,7 +22,6 @@ app.use('/', home);
 
 console.log(`Application Name: ${config.get('name')}`);
 console.log(`Mail Host: ${config.get('mail').host}`);
-console.log(`Mail Password: ${config.get('mail').password}`);
 
 console.log(`NODE_ENV: ${process.env.NODE_ENV}`);
 console.log(`app: ${app.get('env')}`);
@@ -33,12 +30,7 @@ if(app.get('env') === 'development'){
   startupDebugger('Morgan enabled...');
 }
 
-dbDebugger('connected to the database...');
-
-app.use(function(req, res, next){
- console.log("Authenticating...");
- next();
-});
+// dbDebugger('connected to the database...');
 
 
 const port = process.env.PORT || 3000;

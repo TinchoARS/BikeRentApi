@@ -1,0 +1,6 @@
+{
+    "name": "bikerent-api-Development",
+    "mail": {
+        "host": "dev-mail-server"
+    }
+}
