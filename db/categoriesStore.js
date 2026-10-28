@@ -29,20 +29,17 @@ function getAllCategories() {
     setTimeout(() => resolve([...categories]), LATENCY_MS);
   });
 }
+   let nextCategoryId = Math.max(...categories.map(c => c.id)) + 1;
 
-function postNewCategory(category) {
-    return new Promise((resolve, reject) => {
-        setTimeout(() => {
-            if (!category || !category.name) {
-                return reject(new Error('Invalid category'));
-            }
-            categories.push(category);
-            nextCategoryId += 1;
-            resolve(category);
-        }, LATENCY_MS);
-    });
-}
-
+   function addCategory(name) {
+     return new Promise(resolve => {
+       setTimeout(() => {
+         const category = { id: nextCategoryId++, name };
+         categories.push(category);
+         resolve(category);
+       }, LATENCY_MS);
+     });
+   }
 function updateCategory(id, name) {
   return new Promise(resolve => {
     setTimeout(() => {
@@ -71,7 +68,7 @@ module.exports = {
   getCategoryCb,
   getCategory,
   getAllCategories,
-  postNewCategory,
+  addCategory,
   updateCategory,
   deleteCategory
 };

@@ -1,10 +1,9 @@
-logger.js
 const EventEmitter = require('node:events');
 const fs = require('node:fs/promises');
 const path = require('node:path');
 
 class Logger extends EventEmitter {
-  constructor(file = path.join(__dirname, 'logs', 'app.log')) {
+  constructor(file = path.join(__dirname, '..', 'logs', 'app.log')) {
     super();
     this.file = file;
     this.on('log', (entry) => this.#write(entry).catch(console.error));
@@ -18,8 +17,11 @@ class Logger extends EventEmitter {
   }
 }
 
-function logger(req, res, next){
- console.log("Logging...");
- next();
+const fileLogger = new Logger();
+
+function logger(req, res, next) {
+  fileLogger.log(`${req.method} ${req.originalUrl}`);
+  next();
 }
+
 module.exports = logger;

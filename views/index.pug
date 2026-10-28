@@ -1,6 +1,10 @@
-html
-    head
-        title= title
-       
-    body
-        h1= message
+doctype html
+html(lang='es')
+  head
+    meta(charset='utf-8')
+    title= title
+  body
+    h1= appName
+    p Estado: funcionando
+    p Entorno: #{env}
+    a(href='/api/categories') Ver categorías
